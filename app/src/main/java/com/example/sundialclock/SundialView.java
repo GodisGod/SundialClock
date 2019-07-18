@@ -28,10 +28,18 @@ public class SundialView extends View {
 
     private String[] secondsArray = new String[60];
     private String[] minitessArray = new String[60];
-    private String[] hoursArray = new String[12];
+    private String[] hoursArray = new String[24];
     private String[] daysArray = new String[30];
     private String[] weekArray = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
     private String[] monthArray = {"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"};
+
+
+    private String[] curSecondsArray = new String[60];
+    private String[] curMinitessArray = new String[60];
+    private String[] curHoursArray = new String[24];
+    private String[] curDaysArray = new String[30];
+    private String[] curWeekArray = new String[7];
+    private String[] curMonthArray = new String[12];
 
     private int height = 100;
     private int with = 100;
@@ -58,14 +66,15 @@ public class SundialView extends View {
     private Paint paintText;
 
     private int weekDegree = 360 / 7;
+    private int hourDegree = 360 / 24;
 
 
     private int offsetMonthX = 60;
     private int offsetDayX = 140;
     private int offsetWeekX = 240;
-    private int offsetHourX = 320;
-    private int offsetMinuteX = 380;
-    private int offsetSecondX = 480;
+    private int offsetHourX = offsetWeekX + 60;
+    private int offsetMinuteX = offsetHourX + 110;
+    private int offsetSecondX = offsetMinuteX + 100;
 
     private int degreeDivideSixty = 6;
     private int degreeDivideTwelve = 30;
@@ -199,7 +208,7 @@ public class SundialView extends View {
             daysArray[i] = day;
         }
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 24; i++) {
             String hour = getStrFromNum(i + 1, "时");
             hoursArray[i] = hour;
         }
@@ -214,12 +223,14 @@ public class SundialView extends View {
             secondsArray[i] = sec;
         }
 
-        monthArray = resortWordsArray(monthArray, month);
-        weekArray = resortWordsArray(weekArray, week);
-        daysArray = resortWordsArray(daysArray, day);
-        hoursArray = resortWordsArray(hoursArray, hour);
-        minitessArray = resortWordsArray(minitessArray, minute);
-        secondsArray = resortWordsArray(secondsArray, second);
+        curMonthArray = resortWordsArray(monthArray, month);
+        curWeekArray = resortWordsArray(weekArray, week - 1);
+        curDaysArray = resortWordsArray(daysArray, day);
+
+        Log.i("LHD", "==========1111 " + hour);
+        curHoursArray = resortWordsArray(hoursArray, hour);
+        curMinitessArray = resortWordsArray(minitessArray, minute);
+        curSecondsArray = resortWordsArray(secondsArray, second);
 
     }
 
@@ -228,75 +239,82 @@ public class SundialView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawMonth(canvas);
-        drawDay(canvas);
-        drawWeek(canvas);
-        drawHour(canvas);
-        drawMinute(canvas);
-        drawSecond(canvas);
+//        drawMonth(canvas);
+//        drawDay(canvas);
+//        drawWeek(canvas);
+//        drawHour(canvas);
+//        drawMinute(canvas);
+        drawSecond(canvas, curMonthArray, degreeDivideTwelve, offsetMonthX);
+        drawSecond(canvas, curWeekArray, weekDegree, offsetWeekX);
+        drawSecond(canvas, curDaysArray, 12, offsetDayX);
+        Log.i("LHD", "==========2222 " + hour);
+        drawSecond(canvas, curHoursArray, hourDegree, offsetHourX);
+        drawSecond(canvas, curMinitessArray, degreeDivideSixty, offsetMinuteX);
+        drawSecond(canvas, curSecondsArray, degreeDivideSixty, offsetSecondX);
+
 
     }
 
-    private void drawSecond(Canvas canvas) {
+    private void drawSecond(Canvas canvas, String[] value, int degreeSkip, int offsetX) {
         canvas.save();
-        for (int i = 0; i < secondsArray.length; i++) {
-            Log.i("LHD", "secondsArray = " + secondsArray[i]);
-            canvas.drawText(secondsArray[i], centerX + offsetSecondX, centerY, paintText);
-            canvas.rotate(degreeDivideSixty, centerX, centerY);
+        for (int i = 0; i < value.length; i++) {
+            Log.i("LHD", "secondsArray = " + curSecondsArray[i]);
+            canvas.drawText(value[i], centerX + offsetX, centerY, paintText);
+            canvas.rotate(degreeSkip, centerX, centerY);
         }
         canvas.restore();
     }
 
-    private void drawMinute(Canvas canvas) {
-        canvas.save();
-        for (int i = 0; i < minitessArray.length; i++) {
-            Log.i("LHD", "hours = " + minitessArray[i]);
-            canvas.drawText(minitessArray[i], centerX + offsetMinuteX, centerY, paintText);
-            canvas.rotate(degreeDivideSixty, centerX, centerY);
-        }
-        canvas.restore();
-    }
-
-    private void drawHour(Canvas canvas) {
-        canvas.save();
-        for (int i = 0; i < hoursArray.length; i++) {
-            Log.i("LHD", "hours = " + hoursArray[i]);
-            canvas.drawText(hoursArray[i], centerX + offsetHourX, centerY, paintText);
-            canvas.rotate(degreeDivideTwelve, centerX, centerY);
-        }
-        canvas.restore();
-    }
-
-    private void drawWeek(Canvas canvas) {
-        canvas.save();
-        for (int i = 0; i < weekArray.length; i++) {
-            Log.i("LHD", "week = " + weekArray[i]);
-            canvas.drawText(weekArray[i], centerX + offsetWeekX, centerY, paintText);
-            canvas.rotate(weekDegree, centerX, centerY);
-        }
-        canvas.restore();
-    }
-
-    private void drawDay(Canvas canvas) {
-        canvas.save();
-        for (int i = 0; i < daysArray.length; i++) {
-            Log.i("LHD", "days = " + daysArray[i]);
-            canvas.drawText(daysArray[i], centerX + offsetDayX, centerY, paintText);
-            canvas.rotate(12, centerX, centerY);
-        }
-        canvas.restore();
-    }
-
-    private void drawMonth(Canvas canvas) {
-        canvas.save();
-        canvas.drawCircle(with / 2, height / 2, radius, paint);
-        for (int i = 0; i < 12; i++) {
-            Log.i("LHD", "draw = " + monthArray[i]);
-            canvas.drawText(monthArray[i], centerX + offsetMonthX, centerY, paintText);
-            canvas.rotate(degreeDivideTwelve, centerX, centerY);
-        }
-        canvas.restore();
-    }
+//    private void drawMinute(Canvas canvas) {
+//        canvas.save();
+//        for (int i = 0; i < minitessArray.length; i++) {
+//            Log.i("LHD", "hours = " + minitessArray[i]);
+//            canvas.drawText(minitessArray[i], centerX + offsetMinuteX, centerY, paintText);
+//            canvas.rotate(degreeDivideSixty, centerX, centerY);
+//        }
+//        canvas.restore();
+//    }
+//
+//    private void drawHour(Canvas canvas) {
+//        canvas.save();
+//        for (int i = 0; i < hoursArray.length; i++) {
+//            Log.i("LHD", "hours = " + hoursArray[i]);
+//            canvas.drawText(hoursArray[i], centerX + offsetHourX, centerY, paintText);
+//            canvas.rotate(degreeDivideTwelve, centerX, centerY);
+//        }
+//        canvas.restore();
+//    }
+//
+//    private void drawWeek(Canvas canvas) {
+//        canvas.save();
+//        for (int i = 0; i < weekArray.length; i++) {
+//            Log.i("LHD", "week = " + weekArray[i]);
+//            canvas.drawText(weekArray[i], centerX + offsetWeekX, centerY, paintText);
+//            canvas.rotate(weekDegree, centerX, centerY);
+//        }
+//        canvas.restore();
+//    }
+//
+//    private void drawDay(Canvas canvas) {
+//        canvas.save();
+//        for (int i = 0; i < daysArray.length; i++) {
+//            Log.i("LHD", "days = " + daysArray[i]);
+//            canvas.drawText(daysArray[i], centerX + offsetDayX, centerY, paintText);
+//            canvas.rotate(12, centerX, centerY);
+//        }
+//        canvas.restore();
+//    }
+//
+//    private void drawMonth(Canvas canvas) {
+//        canvas.save();
+//        canvas.drawCircle(with / 2, height / 2, radius, paint);
+//        for (int i = 0; i < 12; i++) {
+//            Log.i("LHD", "draw = " + monthArray[i]);
+//            canvas.drawText(monthArray[i], centerX + offsetMonthX, centerY, paintText);
+//            canvas.rotate(degreeDivideTwelve, centerX, centerY);
+//        }
+//        canvas.restore();
+//    }
 
     private String getStrFromNum(int i, String type) {
         int shang = i / 10;
@@ -342,7 +360,7 @@ public class SundialView extends View {
 
 
     public void start() {
-        Observable.interval(1, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io())
+        Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
@@ -357,12 +375,12 @@ public class SundialView extends View {
 
     //根据当前日期对各个数组重新排列
     private String[] resortWordsArray(String[] value, int curValue) {
-
+        Log.i("LHD", "当前数据 = " + curValue);
         List<String> listMin = new ArrayList<>();
         List<String> listMax = new ArrayList<>();
 
         for (int i = 0; i < value.length; i++) {
-            if (i <= curValue) {
+            if (i < curValue - 1) {
                 listMin.add(value[i]);
             } else {
                 listMax.add(value[i]);
@@ -372,12 +390,12 @@ public class SundialView extends View {
         String[] result = new String[value.length];
 
         for (int i = 0; i < listMax.size(); i++) {
-            Log.i("LHD", "添加数据 大 = " + listMax.get(i));
+//            Log.i("LHD", "添加数据 大 = " + listMax.get(i));
             result[i] = listMax.get(i);
         }
 
         for (int i = 0; i < listMin.size(); i++) {
-            Log.i("LHD", "添加数据 小 = " + listMin.get(i));
+//            Log.i("LHD", "添加数据 小 = " + listMin.get(i));
             result[listMax.size() + i] = listMin.get(i);
         }
         Log.i("LHD", "重新排序后的数组 = " + result + "  " + result.length);
