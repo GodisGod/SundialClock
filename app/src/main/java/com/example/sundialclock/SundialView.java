@@ -74,7 +74,7 @@ public class SundialView extends View {
     private int offsetWeekX = 240;
     private int offsetHourX = offsetWeekX + 60;
     private int offsetMinuteX = offsetHourX + 110;
-    private int offsetSecondX = offsetMinuteX + 100;
+    private int offsetSecondX = offsetMinuteX + 110;
 
     private int degreeDivideSixty = 6;
     private int degreeDivideTwelve = 30;
